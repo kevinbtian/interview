@@ -22,10 +22,12 @@ func (h *Handler) GetServicesHandler(w http.ResponseWriter, r *http.Request) {
 		size, err := strconv.Atoi(r.URL.Query().Get("size"))
 		if err != nil {
 			http.Error(w, "invalid 'size' number", http.StatusBadRequest)
+			return
 		}
 		page, err := strconv.Atoi(r.URL.Query().Get("page"))
 		if err != nil {
 			http.Error(w, "invalid 'page' number", http.StatusBadRequest)
+			return
 		}
 
 		// Call database stuff here.
