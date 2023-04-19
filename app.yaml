@@ -1,0 +1,8 @@
+runtime: go116
+
+# postgres database variables
+env_variables:
+  CLOUD_SQL_CONNECTION_NAME: kevinbtian-interview-codelab:us-central1:kevinbtian-interview
+  CLOUD_SQL_USER: kevinbtian-interview
+  CLOUD_SQL_PASSWORD: kevinbtian
+  DB_NAME: kong
