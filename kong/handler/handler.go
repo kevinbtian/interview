@@ -1,18 +1,20 @@
 package handler
 
 import (
-	// "database/sql"
 	"fmt"
 	"net/http"
 	"strconv"
+
+	"github.com/kevinbtian/interview/kong/database"
+
 )
 
 type Handler struct {
-	// db *sql.DB
+	db *database.Database
 }
 
-func NewHandler() *Handler {
-	return &Handler{}
+func NewHandler(db *database.Database) *Handler {
+	return &Handler{db: db}
 }
 
 func (h *Handler) GetServicesHandler(w http.ResponseWriter, r *http.Request) {
@@ -31,7 +33,12 @@ func (h *Handler) GetServicesHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Call database stuff here.
-		output := fmt.Sprintf("q: %s, size: %v, page: %v", q, size, page)
+		// output := fmt.Sprintf("q: %s, size: %v, page: %v", q, size, page)
+		output, err := h.db.GetServices(q, size, page)
+		if err != nil {
+			http.Error(w, "could not query services from database", http.StatusBadRequest)
+			return
+		}
 		fmt.Fprintf(w, output)
 
 	default:
