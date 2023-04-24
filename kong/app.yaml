@@ -1,4 +1,4 @@
-runtime: go116
+runtime: go120
 
 # postgres database variables
 env_variables:
