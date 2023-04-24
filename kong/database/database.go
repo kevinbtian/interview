@@ -80,7 +80,7 @@ func (d *Database) CreateServices() error {
             name TEXT,
             endpoint TEXT,
             release_time TIMESTAMP,
-            changelog TEXT,
+            changelog TEXT
         );
     `
 
