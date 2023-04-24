@@ -81,7 +81,7 @@ func (d *Database) CreateServices() error {
             endpoint TEXT,
             release_time TIMESTAMP,
             changelog TEXT,
-        )
+        );
     `
 
     _, err = conn.Exec(query); if err != nil {
