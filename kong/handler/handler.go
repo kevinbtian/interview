@@ -46,3 +46,14 @@ func (h *Handler) GetServicesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (h *Handler) CreateServicesHandler(w http.ResponseWriter, r *http.Request) {
+	err := h.db.CreateServices(); if err != nil {
+		output := fmt.Sprintf("could not create services table: %v", err)
+		http.Error(w, output, http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Fprintf(w, "successfully created services table.")
+	return
+}

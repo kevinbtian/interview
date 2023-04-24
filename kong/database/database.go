@@ -3,19 +3,16 @@ package database
 import (
     "database/sql"
     "fmt"
-    "os"
-    "path/filepath"
 
     _ "github.com/lib/pq"
 )
 
 // Database connection configuration struct
 type Config struct {
-    ProjectID  string
-    InstanceID string
-    Database   string
-    Username   string
-    Password   string
+    Instance string
+    Database string
+    Username string
+    Password string
 }
 
 type Database struct {
@@ -29,12 +26,8 @@ func NewDatabase(cfg Config) *Database {
 
 // Function to create a new database connection
 func (d *Database) NewConnection() error {
-    dbSocketDir := os.Getenv("DB_SOCKET_DIR")
-    if dbSocketDir == "" {
-        dbSocketDir = filepath.Join(os.TempDir(), "cloudsql")
-    }
 
-    connStr := fmt.Sprintf("user=%s password=%s dbname=%s host=%s/%s sslmode=disable", d.cfg.Username, d.cfg.Password, d.cfg.Database, dbSocketDir, d.cfg.InstanceID)
+    connStr := fmt.Sprintf("user=%s password=%s dbname=%s host=/cloudsql/%s sslmode=disable", d.cfg.Username, d.cfg.Password, d.cfg.Database, d.cfg.Instance)
 
     db, err := sql.Open("postgres", connStr)
     if err != nil {
@@ -73,4 +66,27 @@ func (d *Database) GetServices(q string, pageSize int, pageNum int) (string, err
 
     // perform database query and return results
     return fmt.Sprintf("q: %v, pageSize: %v, pageNum: %v", q, pageSize, pageNum), nil
+}
+
+func (d *Database) CreateServices() error {
+    conn, err := d.GetInstance()
+    if err != nil {
+        return fmt.Errorf("failed to get db instance: %w", err)
+    }
+
+    query := `
+        CREATE TABLE IF NOT EXISTS versions (
+            id SERIAL PRIMARY KEY,
+            name TEXT,
+            endpoint TEXT,
+            release_time TIMESTAMP,
+            changelog TEXT,
+        )
+    `
+
+    _, err = conn.Exec(query); if err != nil {
+        return fmt.Errorf("failed to execute query: %w", err)
+    }
+
+    return nil
 }
